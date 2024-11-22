@@ -28,7 +28,11 @@ app.use('/access-method', MethodAccess);
 
 app.get('/', async (req, res) => {
   console.log('hOLA')
-  return 'Hola';
+  return res.status(201).json({
+    status: 'Success',
+    message: 'Aplicación creada exitosamente',
+    data: [],
+  }); 
 });
 
 app.listen(3000, () => {
