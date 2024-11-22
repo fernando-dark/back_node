@@ -23,7 +23,7 @@ class Database {
       ssl: {
         require: true, // Requiere SSL
         rejectUnauthorized: true, // Permite certificados no verificados
-        ca: fs.readFileSync(sslCertPath), // Carga el archivo PEM
+        // ca: fs.readFileSync(sslCertPath), // Carga el archivo PEM
       },
     });
 
