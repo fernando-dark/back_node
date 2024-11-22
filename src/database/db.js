@@ -19,12 +19,7 @@ class Database {
       username: "postgresliver",
       password: "_j7%L%r078a5",
       port: 5432,
-      logging: console.log,
-      ssl: {
-        require: true, // Requiere SSL
-        rejectUnauthorized: false, // Permite certificados no verificados
-        // ca: fs.readFileSync(sslCertPath), // Carga el archivo PEM
-      },
+      ssl: { rejectUnauthorized: false },
     });
 
     Database.instance = this;
