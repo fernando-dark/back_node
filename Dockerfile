@@ -6,7 +6,7 @@ WORKDIR /app
 # Copiar los archivos de la aplicación
 COPY package*.json ./
 COPY .env ./
-COPY ./src/database/certs/us-east-2-bundle.pem ./
+COPY ./src/database/certs/us-east-2-bundle.pem ./src/database/us-east-2-bundle.pem
 
 # Instalar las dependencias
 RUN npm install
