@@ -1,14 +1,15 @@
+// businessModel.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database/db');
 
-const Tag = sequelize.define('tag', {
+const Business = sequelize.define('Business', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
             allowNull: false,
         },
-        nametag: {
+        namebussiness: {
             type: DataTypes.STRING(100),
             allowNull: false,
         },
@@ -24,24 +25,24 @@ const Tag = sequelize.define('tag', {
         },
     }, 
     {
-        tableName: 'tag',
+        tableName: 'bussiness',
         timestamps: false, // Evita que Sequelize maneje automáticamente `createdAt` y `updatedAt`
     }
 );
 
 /**
- *  Method for get tags
+ *  Method for get bunisess
  * @param {*} data 
  * @returns object or string
 */
-Tag.getAllTags = async function () {
+Business.getAllBusiness = async function () {
     try {
-        const tags = await Tag.findAll();
-        return tags.map(tag => tag.get()); // Mapear los resultados para devolver un array de objetos
+        const business = await Business.findAll();
+        return business.map(business => business.get()); // Mapear los resultados para devolver un array de objetos
     } catch (error) {
         console.error('Error al obtener las etiquetas:', error);
         throw error; // O puedes manejar el error como prefieras
     }
 }
 
-module.exports = Tag;
+module.exports = Business;

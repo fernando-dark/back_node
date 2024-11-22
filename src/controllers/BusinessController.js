@@ -1,24 +1,25 @@
-const TagModel = require('../models/TagModel');
+const BusinessModel = require('../models/BusinessModel');
 
-const getAllTags = async (req, res) => {
+const getAllBusiness = async (req, res) => {
     let code = 204;
-    let message = 'Not tags found';
+    let message = 'Not Business found';
     try {
-        const responseModelTag = await TagModel.getAllTags();
+        const responseModelBusiness = await BusinessModel.getAllBusiness();
 
-        const tags = responseModelTag.map(tag => ({
-            id: tag.id,
-            name: tag.nametag
+        const business = responseModelBusiness.map(businessRow => ({
+            id: businessRow.id,
+            name: businessRow.namebussiness
         }));
-        
-        if (tags.length > 0){
+
+        if (business.length > 0){
             code = 200
-            message = 'Found tags';
+            message = 'Found Business';
         }
+        
         return res.status(code).json({
             status: 'Success',
             message: message,
-            data: tags
+            data: business
         });
     } catch (error) {
         if (error.response && error.response.status === 400) {
@@ -35,4 +36,4 @@ const getAllTags = async (req, res) => {
     }
 };
 
-module.exports = { getAllTags };
+module.exports = { getAllBusiness };

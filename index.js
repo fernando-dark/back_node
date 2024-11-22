@@ -1,5 +1,4 @@
 const express = require('express');
-const db = require('./src/database/db');
 const path = require('path');
 const bodyParser = require('body-parser');
 
@@ -9,6 +8,7 @@ require('dotenv').config();
 const AppRoutes = require('./src/v1/routes/AppRoutes.js');
 const Tags = require('./src/v1/routes/TagRoutes.js');
 const MethodAccess = require('./src/v1/routes/MethodAccessRoutes.js');
+const Business = require('./src/v1/routes/BussinesRoute.js');
 
 const app = express();
 
@@ -25,6 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/app', AppRoutes);
 app.use('/tag', Tags);
 app.use('/access-method', MethodAccess);
+app.use('/business', Business);
 
 app.get('/', async (req, res) => {
   console.log('hOLA')
