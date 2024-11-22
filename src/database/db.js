@@ -22,7 +22,7 @@ class Database {
       logging: console.log,
       ssl: {
         require: true, // Requiere SSL
-        rejectUnauthorized: true, // Permite certificados no verificados
+        rejectUnauthorized: false, // Permite certificados no verificados
         // ca: fs.readFileSync(sslCertPath), // Carga el archivo PEM
       },
     });
