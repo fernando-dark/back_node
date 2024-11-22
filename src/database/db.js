@@ -1,5 +1,4 @@
 const { Sequelize } = require('sequelize');
-const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
@@ -9,17 +8,28 @@ class Database {
       return Database.instance;
     }
 
-    const sslCertPath = path.join(__dirname, 'certs', 'global-bundle.pem');
+    const sslCertPath = path.join(__dirname, 'us-east-2-bundle.pem');
+
+    // Leer el archivo del certificado
+    const caCert = fs.readFileSync(sslCertPath);
+
+    // const sslCertPath = path.join(__dirname, 'certs', 'us-east-2-bundle.pem');
 
     // Configuración de la conexión usando Sequelize
     this.sequelize = new Sequelize({
       dialect: 'postgres',
       host: "database-liverpool.cz0es6muycoi.us-east-2.rds.amazonaws.com",
-      database: "liverpool",
+      database: "bgliverpool",
       username: "postgresliver",
       password: "_j7%L%r078a5",
       port: 5432,
-      ssl: { rejectUnauthorized: false },
+      dialectOptions: {
+        ssl: {
+          ca: caCert,
+          require: true,
+          rejectUnauthorized: true, // Solo si no tienes certificado válido
+        }
+      }
     });
 
     Database.instance = this;
