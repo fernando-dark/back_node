@@ -20,7 +20,7 @@ class Database {
     this.sequelize = new Sequelize({
       dialect: 'postgres',
       host: "database-liverpool.cz0es6muycoi.us-east-2.rds.amazonaws.com",
-      database: "bgliverpool",
+      database: "bdliverpool",
       username: "postgresliver",
       password: "_j7%L%r078a5",
       port: 5432,
