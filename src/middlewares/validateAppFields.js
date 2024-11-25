@@ -11,7 +11,6 @@ const validateAppFieldsApp = [
   body('name').notEmpty().withMessage('El campo nombre es requerido'),
   body('description').notEmpty().withMessage('El campo Descripcion es requerido'),
   body('url').notEmpty().withMessage('El campo URL es requerido'),
-  body('bussines').notEmpty().withMessage('El campo Negocio es requerido'),
 
   (req, res, next) => {
     const errors = validationResult(req);

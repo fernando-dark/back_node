@@ -41,7 +41,7 @@ class S3Bucket {
 
     async getSignedUrl(fileName, expiresIn = 60) {
         try {
-            // Verifica que fileName tiene un valor válido
+
             if (!fileName) {
                 throw new Error('No se proporcionó un nombre de archivo válido.');
             }
@@ -49,8 +49,9 @@ class S3Bucket {
             console.log('Generando URL firmada para el archivo:', fileName);
     
             const command = new GetObjectCommand({
-                Bucket: this.bucketName,  // Asegúrate de que this.bucketName está bien configurado
-                Key: fileName,            // El nombre del archivo debe ser válido
+                Bucket: this.bucketName,
+                Key: fileName,
+                Expires: 300 
             });
     
             const signedUrl = await getSignedUrl(this.s3, command, { expiresIn });
@@ -61,6 +62,7 @@ class S3Bucket {
             throw error;
         }
     }
+    
 }
 
 module.exports = S3Bucket;

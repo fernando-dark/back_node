@@ -8,7 +8,7 @@ const Responsable = sequelize.define('responsable', {
             autoIncrement: true,
             allowNull: false,
         },
-        email: {
+        nombre: {
             type: DataTypes.STRING(50),
             allowNull: false,
         },

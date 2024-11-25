@@ -1,10 +1,10 @@
-const { Sequelize, DataTypes } = require('sequelize');
+// appBussinessModel.js
+const { DataTypes } = require('sequelize');
 const sequelize = require('../database/db');
+const App = require('./AppModel'); // Importamos App
+const Business = require('./BusinessModel'); // Importamos MethodAccess
 
-const App = require('./AppModel');
-const Tag = require('./TagModel'); 
-
-const Apptags = sequelize.define('apptags', {
+const AppBussiness = sequelize.define('AppBussiness', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -15,16 +15,16 @@ const Apptags = sequelize.define('apptags', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: App, 
+            model: App, // Relacionamos con App
             key: 'id',
         },
-        onDelete: 'NO ACTION', 
+        onDelete: 'NO ACTION',
     },
-    tagid: {
+    bussinessid: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Tag,
+            model: Business, // Relacionamos con Bussiness
             key: 'id',
         },
         onDelete: 'NO ACTION',
@@ -40,41 +40,37 @@ const Apptags = sequelize.define('apptags', {
         defaultValue: DataTypes.NOW,
     },
 }, {
-    tableName: 'apptags',
-    timestamps: false, // No automatic `createdAt` and `updatedAt` columns
+    tableName: 'appbussiness',
+    timestamps: false, // No manejar los campos createdAt y updatedAt
     indexes: [
         {
-            name: 'idx_apptags_appid',
+            name: 'idx_appbussiness_appid',
             fields: ['appid']
         },
         {
-            name: 'idx_apptags_tagid',
-            fields: ['tagid']
+            name: 'idx_appbussiness_bussinessid',
+            fields: ['bussinessid']
         }
     ]
 });
 
-Apptags.saveOnlyAppTag = async (data) => {
+/**
+ *  Method for insert in table appbussiness
+ * @param {*} data 
+ * @returns promise
+*/
+AppBussiness.saveAppBussiness = async (data) => {
     try {
-        const appTagOnlyCreate = await Apptags.create(data);
-        return appTagOnlyCreate;
-    } catch (error) {
-        console.error('Error al guardar los datos', error);
-        throw error; // O puedes manejar el error como prefieras
-    } 
-}
-
-Apptags.saveAppTags = async (data) => {
-    try {
-        const appTagsCreate = await Apptags.bulkCreate(data, { 
+        const appAppBussiness = await AppBussiness.bulkCreate(data, { 
             // `id` will be auto-generated
             returning: true 
         });
-        return appTagsCreate;
+        return AppBussiness;
     } catch (error) {
         console.error('Error al guardar los datos', error);
         throw error; // O puedes manejar el error como prefieras
     } 
 }
 
-module.exports = Apptags;
+
+module.exports = AppBussiness;

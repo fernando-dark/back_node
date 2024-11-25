@@ -1,5 +1,6 @@
 const TagModel = require('../models/TagModel');
 
+
 const getAllTags = async (req, res) => {
     let code = 204;
     let message = 'Not tags found';

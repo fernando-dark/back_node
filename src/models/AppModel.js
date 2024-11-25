@@ -29,10 +29,6 @@ const App = sequelize.define('App', {
         type: DataTypes.STRING(800),
         allowNull: true,
     },
-    bussines: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
-    },
     updated_at: {
         type: DataTypes.DATE,
         allowNull: false,

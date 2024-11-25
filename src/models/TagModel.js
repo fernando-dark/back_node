@@ -29,6 +29,19 @@ const Tag = sequelize.define('tag', {
     }
 );
 
+
+Tag.saveOnlyTag = async (data) => {
+    try {
+        const tagCreate = await Tag.create(data, { 
+            returning: true, // Esto devuelve las instancias creadas
+        });
+        return tagCreate;
+    } catch (error) {
+        console.error('Error al guardar los datos', error);
+        throw error; // O puedes manejar el error como prefieras
+    } 
+}
+
 /**
  *  Method for get tags
  * @param {*} data 

@@ -42,6 +42,16 @@ const AppMethodAccess = sequelize.define('AppMethodAccess', {
 }, {
     tableName: 'appmethodaccess',
     timestamps: false, // No manejar los campos createdAt y updatedAt
+    indexes: [
+        {
+            name: 'idx_appmethodaccess_appid',
+            fields: ['appid']
+        },
+        {
+            name: 'idx_appmethodaccess_methodaccessid',
+            fields: ['methodaccessid']
+        }
+    ]
 });
 
 /**

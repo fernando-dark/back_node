@@ -1,4 +1,4 @@
-const { App, MethodAccess, AppMethodAccess, Tags, AppTags, Responsable, AppResponsable  } = require('../models');
+const { App, MethodAccess, AppMethodAccess, Tags, AppTags, Responsable, AppResponsable, Bussiness, AppBussiness  } = require('../models');
 const S3Bucket = require('../utils/S3Bucket');
 
 const s3Bucket = new S3Bucket({
@@ -10,7 +10,7 @@ const s3Bucket = new S3Bucket({
 
 const addApp = async (req, res) => {
     try {
-        const { name, description, methodsAccess, url, bussines, tags, responsables } = req.body;
+        const { name, description, methodsAccess, url, bussiness, tags, responsables } = req.body;
 
         const fileKey = `${Date.now()}-${req.file.originalname}`;
         const responseUpdate = s3Bucket.uploadImage(req, fileKey);
@@ -20,12 +20,11 @@ const addApp = async (req, res) => {
             nameapp: name,
             descriptionapp: description,
             statusapp: 1,
-            urlapp: url,
-            bussines
+            urlapp: url
         };
-        
+
         const responseModel = await App.addApp(appData);
-        if ( responseModel && responseUpdate ) {
+        if ( responseModel && responseUpdate ) { // && responseUpdate 
 
             /** Save Access Methods **/
             let parsedMethodAccess = [];
@@ -49,21 +48,73 @@ const addApp = async (req, res) => {
     
             /** Save tags **/
             let parsedTags = [];
+            let arrayTags = [];
+            let objectTag = {};
             if (tags && typeof tags === 'string') {
                 try {
                     const formattedTags = tags.replace(/'/g, '"');
                     parsedTags = JSON.parse(formattedTags);
-                    const data = parsedTags.map(tag => {
+                    parsedTags = parsedTags.map(item => ({
+                        id: item.id === null ? 'DEFAULT' : item.id,
+                        nametag: item.name,
+                    }));
+                    
+                    for (const tag of parsedTags) {
+                        if (tag.id === 'DEFAULT') {
+                            objectTag = {
+                                nametag: tag.nametag
+                            }
+                        } else {
+                            // Asociar el tag existente si el id no es "DEFAULT"
+                            const dataTags = {
+                                appid: responseModel.id,
+                                tagid: tag.id,
+                                updated_at: new Date(),
+                                created_at: new Date(),
+                            };
+                            arrayTags.push(dataTags);
+                        }
+                    }
+
+                    var isEmptyObj = Object.keys(objectTag).length;
+
+                    if ( isEmptyObj > 0 ){
+                        Tags.saveOnlyTag(objectTag).then(responseModelTags => {
+                            const dataTags = {
+                                appid: responseModel.id,
+                                tagid: responseModelTags.id,
+                                updated_at: new Date(),
+                                created_at: new Date(),
+                            };
+                            return AppTags.saveAppTags([dataTags]);
+                        }).catch(error => console.error('Error guardando nuevo tag:', error));
+                    }
+                    
+                    if ( arrayTags.length > 0) {
+                        const responseModelAppTags = AppTags.saveAppTags(arrayTags);
+                    }
+                } catch (error) {
+                    console.error('Error al parsear tags:', error);
+                }
+            }
+
+            /** Save Bunisess */
+            let parsedBussiness = [];
+            if (bussiness && typeof bussiness === 'string') {
+                try {
+                    const formattedBussiness = bussiness.replace(/'/g, '"');
+                    parsedBussiness = JSON.parse(formattedBussiness);
+                    const data = parsedBussiness.map(bussiness => {
                         return {
                             appid: responseModel.id,
-                            tagid: tag.id,
+                            bussinessid: bussiness.id,
                             updated_at:  new Date(),
                             created_at:  new Date()
                         };
                     });
-                    const responseModelAppTags = Tags.saveAppTags(data);
+                    const responseModelAppBussiness = AppBussiness.saveAppBussiness(data);
                 } catch (error) {
-                    console.log('Error al parsear tags')
+                    console.log('Error al parsear Bussiness')
                 }
             }
 
@@ -74,6 +125,9 @@ const addApp = async (req, res) => {
                     try {
                         const formattedResponsables = responsables.replace(/'/g, '"');
                         parsedResponsables = JSON.parse(formattedResponsables);
+                        parsedResponsables = parsedResponsables.map(item => {
+                            return { ...item, nombre: item.name };
+                        });
                         if ( parsedResponsables.length > 0) {
                             Responsable.saveResponsables(parsedResponsables).then(responseModelResponsable => {
                                 const dataResposable = responseModelResponsable.map(responsable => {
@@ -102,6 +156,7 @@ const addApp = async (req, res) => {
         }
 
     } catch (error) {
+        console.log('Error', error);
         if (error.response && error.response.status === 400) {
             return res.status(400).json({
                 status: 'Faild',
@@ -125,9 +180,23 @@ const getAppWithDetails = async (req, res) => {
                 ['nameapp', 'name'],
                 ['descriptionapp', 'description'],
                 ['urlapp', 'url'],
-                'bussines',
             ],
             include: [
+                {
+                    model: AppBussiness,
+                    required: false,
+                    attributes: [['id', 'bussinessKey']],
+                    include: [
+                        {
+                            model: Bussiness,
+                            as: 'bussines',
+                            attributes: [
+                                ['id', 'bussiness_id'],
+                                ['namebussiness', 'bussiness_name']
+                            ],
+                        }
+                    ]
+                },
                 {
                     model: AppMethodAccess,
                     required: false,
@@ -168,7 +237,7 @@ const getAppWithDetails = async (req, res) => {
                         as: 'responsablesa',
                         attributes: [
                             ['id', 'responsable_id'],
-                            ['email', 'email']
+                            ['nombre', 'name']
                         ],
                       }
                     ]

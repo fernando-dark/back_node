@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./src/documentation/swagger.js');
 
 require('dotenv').config();
 
@@ -35,6 +37,10 @@ app.get('/', async (req, res) => {
     data: [],
   }); 
 });
+
+// Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 
 app.listen(3000, () => {
     console.log(`Server running on port ${port}`);
