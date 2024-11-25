@@ -44,6 +44,24 @@ const App = sequelize.define('App', {
     timestamps: false, // No manejar los campos createdAt y updatedAt
 });
 
+
+/**
+ *  Method for update status in app
+ * @param {*} data 
+ * @returns object or string
+*/
+App.updateStatusApp = async function (appid, status) {
+    try {
+    const [updatedRows]  = await this.update(
+        { statusapp: status }, // Datos a actualizar
+        { where: { appid } }    // Condición para actualizar
+    );
+    return updatedRows;
+    } catch (error) {
+      return `Error al crear el registro: ${error.message}`;
+    }
+};
+
 /**
  *  Method for insert in table
  * @param {*} data 

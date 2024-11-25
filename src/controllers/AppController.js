@@ -40,59 +40,44 @@ const addApp = async (req, res) => {
                             created_at:  new Date()
                         };
                     });
-                    const responseModelAppTags = AppMethodAccess.saveAppMethodAccesss(data);
+                    const responseModelMethodAccess = AppMethodAccess.saveAppMethodAccesss(data);
                 } catch (error) {
                     console.log('Error al parsear Metodos')
                 }
             }
-    
-            /** Save tags **/
-            let parsedTags = [];
-            let arrayTags = [];
-            let objectTag = {};
+            
+            /** Save Tags **/
             if (tags && typeof tags === 'string') {
                 try {
                     const formattedTags = tags.replace(/'/g, '"');
                     parsedTags = JSON.parse(formattedTags);
-                    parsedTags = parsedTags.map(item => ({
-                        id: item.id === null ? 'DEFAULT' : item.id,
-                        nametag: item.name,
-                    }));
-                    
-                    for (const tag of parsedTags) {
-                        if (tag.id === 'DEFAULT') {
-                            objectTag = {
-                                nametag: tag.nametag
+                    const processedTags = await Promise.all(
+                        parsedTags.map(async (tag) => {
+                            // Buscar si ya existe el tag
+                            const existingTag = await Tags.findOne({ where: { nametag: tag.nametag } });
+        
+                            if (existingTag) {
+
+                                return existingTag;
+
+                            } else {
+                                return Tags.saveOnlyTag({
+                                    nametag: tag.nametag,
+                                    updated_at: new Date(),
+                                    created_at: new Date(),
+                                }).then(responseModelTags => {
+                                    const dataTags = {
+                                        appid: responseModel.id,
+                                        tagid: responseModelTags.id,
+                                        updated_at: new Date(),
+                                        created_at: new Date(),
+                                    };
+                                    return AppTags.saveAppTags([dataTags]);
+                                }).catch(error => console.error('Error guardando nuevo tag:', error));
                             }
-                        } else {
-                            // Asociar el tag existente si el id no es "DEFAULT"
-                            const dataTags = {
-                                appid: responseModel.id,
-                                tagid: tag.id,
-                                updated_at: new Date(),
-                                created_at: new Date(),
-                            };
-                            arrayTags.push(dataTags);
-                        }
-                    }
-
-                    var isEmptyObj = Object.keys(objectTag).length;
-
-                    if ( isEmptyObj > 0 ){
-                        Tags.saveOnlyTag(objectTag).then(responseModelTags => {
-                            const dataTags = {
-                                appid: responseModel.id,
-                                tagid: responseModelTags.id,
-                                updated_at: new Date(),
-                                created_at: new Date(),
-                            };
-                            return AppTags.saveAppTags([dataTags]);
-                        }).catch(error => console.error('Error guardando nuevo tag:', error));
-                    }
-                    
-                    if ( arrayTags.length > 0) {
-                        const responseModelAppTags = AppTags.saveAppTags(arrayTags);
-                    }
+                        })
+                    );
+                    console.log('response mmasive', processedTags)
                 } catch (error) {
                     console.error('Error al parsear tags:', error);
                 }
@@ -126,7 +111,7 @@ const addApp = async (req, res) => {
                         const formattedResponsables = responsables.replace(/'/g, '"');
                         parsedResponsables = JSON.parse(formattedResponsables);
                         parsedResponsables = parsedResponsables.map(item => {
-                            return { ...item, nombre: item.name };
+                            return { ...item, nombre: item?.name ? item?.name : null, email: item?.email };
                         });
                         if ( parsedResponsables.length > 0) {
                             Responsable.saveResponsables(parsedResponsables).then(responseModelResponsable => {
@@ -155,6 +140,37 @@ const addApp = async (req, res) => {
             });
         }
 
+    } catch (error) {
+        console.log('Error', error);
+        if (error.response && error.response.status === 400) {
+            return res.status(400).json({
+                status: 'Faild',
+                error: `Error en la solicitud: ${error.message}`
+            });
+        } else if (error.response && error.response.status === 500) {
+            return res.status(500).json({
+                status: 'Faild',
+                error: `Error interno del servidor: ${error.message}`
+            });
+        }
+    }
+};
+
+const deleteApp = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const responseModel = await App.updateStatusApp(id, 0);
+        if ( responseModel === 0 ) {
+            return res.status(200).json({
+                status: 'Success',
+                message: 'Not Found app for delete'
+            });
+        } else {
+            return res.status(200).json({
+                status: 'Success',
+                message: 'App deleted'
+            });
+        }
     } catch (error) {
         console.log('Error', error);
         if (error.response && error.response.status === 400) {
@@ -237,7 +253,8 @@ const getAppWithDetails = async (req, res) => {
                         as: 'responsablesa',
                         attributes: [
                             ['id', 'responsable_id'],
-                            ['nombre', 'name']
+                            ['nombre', 'name'],
+                            'email'
                         ],
                       }
                     ]
@@ -273,4 +290,4 @@ const getAppWithDetails = async (req, res) => {
 };
 
 
-module.exports = { addApp, getAppWithDetails };
+module.exports = { addApp, deleteApp, getAppWithDetails };

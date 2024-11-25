@@ -29,16 +29,35 @@ const Tag = sequelize.define('tag', {
     }
 );
 
-
+/**
+ *  Method for create only one tags
+ * @param {*} data 
+ * @returns object or string
+*/
 Tag.saveOnlyTag = async (data) => {
     try {
-        const tagCreate = await Tag.create(data, { 
+        const tagCreate = await Tag.create(data);
+        return tagCreate;
+    } catch (error) {
+        console.error('Error al guardar los datos', error);
+        throw error;
+    } 
+}
+
+/**
+ *  Method for create massive tags
+ * @param {*} data 
+ * @returns object or string
+*/
+Tag.saveCreateTag = async (data) => {
+    try {
+        const tagCreate = await Tag.bulkCreate(data, { 
             returning: true, // Esto devuelve las instancias creadas
         });
         return tagCreate;
     } catch (error) {
         console.error('Error al guardar los datos', error);
-        throw error; // O puedes manejar el error como prefieras
+        throw error;
     } 
 }
 

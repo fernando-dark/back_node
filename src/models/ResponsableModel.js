@@ -10,6 +10,10 @@ const Responsable = sequelize.define('responsable', {
         },
         nombre: {
             type: DataTypes.STRING(50),
+            allowNull: true,
+        },
+        email: {
+            type: DataTypes.STRING(50),
             allowNull: false,
         },
         updated_at: {
