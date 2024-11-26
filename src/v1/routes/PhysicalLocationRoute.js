@@ -1,26 +1,37 @@
 const express = require('express');
-const router = express.Router();
+const { searchPhysicalLocationModel } = require('../../controllers/PhysicalLocationController');
+const { validateSearch } = require('../../middlewares/validateAppFields');
 
-const businessController = require('../../controllers/BusinessController');
+const router = express.Router();
 
 /**
  * @swagger
  * tags:
  *   name: Catalogs
- *   description: Rutas relacionadas con los Bunisess.
+ *   description: Obtener las Ubicacion Fisica
  */
 
 /**
  * @swagger
- * /business/consult:
- *   get:
- *     summary: Obtiene todos los Bunisess
+ * /physical-location/search:
+ *   post:
+ *     summary: Obtiene las Ubicaciones Fisicas
  *     tags: 
  *       - Catalogs
- *     description: Devuelve una lista de todos los Bunisess disponibles.
+ *     description: Devuelve una lista de las coincidencias encontradas de Ubicaciones Fisicas
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               search:
+ *                 type: string
+ *                 example: "0487"
  *     responses:
  *       200:
- *         description: Lista de Negocios obtenida exitosamente.
+ *         description: Lista de subdivisiones exitosamente
  *         content:
  *           application/json:
  *             schema:
@@ -31,7 +42,7 @@ const businessController = require('../../controllers/BusinessController');
  *                   example: Success
  *                 message:
  *                   type: string
- *                   example: Found Business
+ *                   example: Found Found physicalLocation
  *                 data:
  *                   type: array
  *                   items:
@@ -39,12 +50,23 @@ const businessController = require('../../controllers/BusinessController');
  *                     properties:
  *                       id:
  *                         type: integer
- *                         example: 1
- *                       name:
+ *                         example: 2
+ *                       divisionid:
  *                         type: string
- *                         example: Liverpool
+ *                         example: "0487"
+ *                       division:
+ *                         type: string
+ *                         example: Oficinas Mario Pani
+ *                       updated_at:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2024-11-26T03:10:24.956Z"
+ *                       created_at:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2024-11-26T03:10:24.956Z"
  *       204:
- *         description: No existe lista de negocios
+ *         description: No existe coincidencias con el valor buscado
  *       400:
  *         description: Error en la solicitud; se envió mal un campo o hubo un fallo en el consumo. Contacte al equipo de backend.
  *         content:
@@ -73,9 +95,7 @@ const businessController = require('../../controllers/BusinessController');
  *                   example: Error interno del servidor
  */
 router
-    .get('/consult', businessController.getAllBusiness)
-
-
+    .post('/search', validateSearch, searchPhysicalLocationModel)
 
 
 module.exports = router;    

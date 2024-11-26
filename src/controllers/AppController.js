@@ -2,10 +2,10 @@ const { App, MethodAccess, AppMethodAccess, Tags, AppTags, Responsable, AppRespo
 const S3Bucket = require('../utils/S3Bucket');
 
 const s3Bucket = new S3Bucket({
-    accessKeyId: process.env.ACCESS_KEY,
-    secretAccessKey: process.env.SECRET_KEY,
-    region: process.env.REGION,
-    bucketName: process.env.BUCKETNAME,
+    accessKeyId: 'AKIAYEKP52QJOQUZAEOE',
+    secretAccessKey: '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',
+    region: 'us-east-2',
+    bucketName: 'myliverpool',
 });
 
 const addApp = async (req, res) => {
@@ -135,11 +135,16 @@ const addApp = async (req, res) => {
     
             return res.status(201).json({
                 status: 'Success',
-                message: 'Aplicación creada exitosamente',
+                message: 'Application created',
                 data: responseModel,
             });
+        } else {
+            return res.status(200).json({
+                status: 'Faild',
+                message: 'Application cant created',
+                data: responseModel,
+            }); 
         }
-
     } catch (error) {
         console.log('Error', error);
         if (error.response && error.response.status === 400) {
@@ -171,6 +176,57 @@ const deleteApp = async (req, res) => {
                 message: 'App deleted'
             });
         }
+    } catch (error) {
+        console.log('Error', error);
+        if (error.response && error.response.status === 400) {
+            return res.status(400).json({
+                status: 'Faild',
+                error: `Error en la solicitud: ${error.message}`
+            });
+        } else if (error.response && error.response.status === 500) {
+            return res.status(500).json({
+                status: 'Faild',
+                error: `Error interno del servidor: ${error.message}`
+            });
+        }
+    }
+};
+
+const updateApp = async (req, res) => {
+    try {
+        const { name, description, methodsAccess, url, bussiness, tags, responsables } = req.body;
+        const { id } = req.params;
+        const fileKey = `${Date.now()}-${req.file.originalname}`;
+
+        const appExists = await App.findByPk(id);
+        if (!appExists) {
+            return res.status(204).json({
+                status: 'Faild',
+                message: 'Application not found',
+            });
+        } else {
+            const appData = {
+                imageurlapp: fileKey,
+                nameapp: name,
+                descriptionapp: description,
+                urlapp: url
+            };
+    
+            const responseModel = await App.updateFieldsApp(id, appData);
+            console.log('response', responseModel)
+            if ( responseModel === 0 ) {
+                return res.status(200).json({
+                    status: 'Faild',
+                    message: 'Application cant update',
+                }); 
+            } else {
+                return res.status(200).json({
+                    status: 'Success',
+                    message: 'Application updated',
+                });
+            }
+        }
+
     } catch (error) {
         console.log('Error', error);
         if (error.response && error.response.status === 400) {
@@ -271,7 +327,7 @@ const getAppWithDetails = async (req, res) => {
 
         return res.status(200).json({
             status: 'Success',
-            message: 'Applications',
+            message: 'Applications Found',
             data: apps,
         });
     } catch (error) {
@@ -290,4 +346,4 @@ const getAppWithDetails = async (req, res) => {
 };
 
 
-module.exports = { addApp, deleteApp, getAppWithDetails };
+module.exports = { addApp, deleteApp, updateApp, getAppWithDetails };

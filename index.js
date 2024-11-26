@@ -8,9 +8,18 @@ require('dotenv').config();
 
 // Routes
 const AppRoutes = require('./src/v1/routes/AppRoutes.js');
+
+/// Catalogos
 const Tags = require('./src/v1/routes/TagRoutes.js');
 const MethodAccess = require('./src/v1/routes/MethodAccessRoutes.js');
 const Business = require('./src/v1/routes/BussinesRoute.js');
+const ANomina = require('./src/v1/routes/ANominaRoute.js');
+const Society = require('./src/v1/routes/SocietyRoute.js');
+const PersonalArea = require('./src/v1/routes/PersonalAreaRoute.js');
+const PersonalGorup = require('./src/v1/routes/PersonaGroupRoutes.js');
+const Subdivision = require('./src/v1/routes/SubdivisionRoutes.js');
+const SalaryLevel = require('./src/v1/routes/SalaryLevelRoutes.js');
+const PhysicalLocation = require('./src/v1/routes/PhysicalLocationRoute.js');
 
 const app = express();
 
@@ -28,6 +37,13 @@ app.use('/app', AppRoutes);
 app.use('/tag', Tags);
 app.use('/access-method', MethodAccess);
 app.use('/business', Business);
+app.use('/anomina', ANomina);
+app.use('/society', Society);
+app.use('/personal-area', PersonalArea);
+app.use('/personal-group', PersonalGorup);
+app.use('/subdivision', Subdivision);
+app.use('/salary-level', SalaryLevel);
+app.use('/physical-location', PhysicalLocation);
 
 app.get('/', async (req, res) => {
   console.log('hOLA')

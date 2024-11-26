@@ -34,4 +34,19 @@ const validateAppFieldsApp = [
   },
 ];
 
-module.exports = { validateAppFieldsApp, upload };
+const validateSearch = [
+  body('search').notEmpty().withMessage('El campo busqueda es requerido'),
+
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        message: 'Error en los campos de la solicitud',
+        errors: errors.array(),
+      });
+    }
+    next();
+  },
+];
+
+module.exports = { validateAppFieldsApp, upload , validateSearch};

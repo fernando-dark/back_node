@@ -1,26 +1,37 @@
 const express = require('express');
-const router = express.Router();
+const { searchSalaryLevel } = require('../../controllers/SalarylevelController');
+const { validateSearch } = require('../../middlewares/validateAppFields');
 
-const businessController = require('../../controllers/BusinessController');
+const router = express.Router();
 
 /**
  * @swagger
  * tags:
  *   name: Catalogs
- *   description: Rutas relacionadas con los Bunisess.
+ *   description: Obtener las sociedades
  */
 
 /**
  * @swagger
- * /business/consult:
- *   get:
- *     summary: Obtiene todos los Bunisess
+ * /salary-level/search:
+ *   post:
+ *     summary: Obtiene las Nivel de Salarios
  *     tags: 
  *       - Catalogs
- *     description: Devuelve una lista de todos los Bunisess disponibles.
+ *     description: Devuelve una lista de las coincidencias encontradas de nivel de salarios
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               search:
+ *                 type: string
+ *                 example: "PS3GR11"
  *     responses:
  *       200:
- *         description: Lista de Negocios obtenida exitosamente.
+ *         description: Lista de nivel de salarios encontrada exitosamente
  *         content:
  *           application/json:
  *             schema:
@@ -31,7 +42,7 @@ const businessController = require('../../controllers/BusinessController');
  *                   example: Success
  *                 message:
  *                   type: string
- *                   example: Found Business
+ *                   example: Found societies
  *                 data:
  *                   type: array
  *                   items:
@@ -39,12 +50,23 @@ const businessController = require('../../controllers/BusinessController');
  *                     properties:
  *                       id:
  *                         type: integer
- *                         example: 1
- *                       name:
+ *                         example: 2
+ *                       grprof:
  *                         type: string
- *                         example: Liverpool
+ *                         example: "PS3GR11"
+ *                       emptype:
+ *                         type: string
+ *                         example: Ejecutivo
+ *                       updated_at:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2024-11-26T03:10:24.956Z"
+ *                       created_at:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2024-11-26T03:10:24.956Z"
  *       204:
- *         description: No existe lista de negocios
+ *         description: No existe coincidencias con el valor buscado
  *       400:
  *         description: Error en la solicitud; se envió mal un campo o hubo un fallo en el consumo. Contacte al equipo de backend.
  *         content:
@@ -73,9 +95,7 @@ const businessController = require('../../controllers/BusinessController');
  *                   example: Error interno del servidor
  */
 router
-    .get('/consult', businessController.getAllBusiness)
+    .post('/search', validateSearch, searchSalaryLevel)
 
 
-
-
-module.exports = router;    
+module.exports = router;
