@@ -27,6 +27,7 @@ class GroupModel {
 
     static async getAllGroups() {
         const result = await pool.query(`SELECT * FROM "Group"`);
+
         return result.rows.map(row => new GroupModel(row));
     }
 
@@ -45,11 +46,20 @@ class GroupModel {
 
 
     static async deleteGroup({ id }) {
-        const result = await pool.query(
-            `DELETE FROM "Group" WHERE id = $1 RETURNING *`,
-            [id]
-        );
-        return new GroupModel(result.rows[0]);
+        try {
+            const result = await pool.query(
+                `DELETE FROM "Group" WHERE id = $1 RETURNING *`,
+                [id]
+            );
+
+            if (result.rows.length === 0) {
+                throw new Error(`No se encontró un grupo de rol con el ID ${id}`);
+            }
+
+            return new GroupModel(result.rows[0]);
+        } catch (error) {
+            throw error;
+        }
     }
 }
 
