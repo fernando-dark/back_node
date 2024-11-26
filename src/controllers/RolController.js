@@ -70,19 +70,26 @@ const editRole = async (req, res) => {
 
 const deleteRole = async (req, res) => {
 
-    console.log('ENTRO AQUI');
-
     try {
         const { id } = req.params;
 
-        const roleGroup = await RolModel.deleteRole({ id });
+        const deletedRole = await RolModel.deleteRole({ id });
+
+        if (!deletedRole || deletedRole === 0) {
+            return res.status(200).json({
+                message: `No se encontró un rol con el ID ${id}`,
+            });
+        }
+
         res.status(200).json({
-            message: 'Role eliminado correctamente'
+            message: `Rol ${id} eliminado correctamente`,
         });
+
     } catch (error) {
-        console.log(error);
+        console.log(`Error  ${error}`);
+
         res.status(500).json({
-            error: `Error al eliminar role 123 ${error}`
+            error: error.message
         });
     }
 }
