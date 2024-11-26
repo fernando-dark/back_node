@@ -63,6 +63,23 @@ App.updateStatusApp = async function (appid, status) {
 };
 
 /**
+ *  Method for update fields app
+ * @param {*} data 
+ * @returns object or string
+*/
+App.updateFieldsApp = async function (id, objectUpdate) {
+    try {
+    const [updatedRows]  = await this.update(
+        objectUpdate, // Datos a actualizar
+        { where: { id } }    // Condición para actualizar
+    );
+    return updatedRows;
+    } catch (error) {
+      return `Error al crear el registro: ${error.message}`;
+    }
+};
+
+/**
  *  Method for insert in table
  * @param {*} data 
  * @returns object or string

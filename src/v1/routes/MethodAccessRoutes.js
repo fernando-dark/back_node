@@ -6,7 +6,7 @@ const MethodAccessController = require('../../controllers/MethodAccessController
 /**
  * @swagger
  * tags:
- *   name: Access Method
+ *   name: Catalogs
  *   description: Rutas relacionadas con los Metodos de acceso.
  */
 
@@ -16,7 +16,7 @@ const MethodAccessController = require('../../controllers/MethodAccessController
  *   get:
  *     summary: Obtiene todos los Métodos de Acceso
  *     tags: 
- *       - Access Method
+ *       - Catalogs
  *     description: Devuelve una lista de todos los Métodos de acceso, como "App" o "Web", disponibles.
  *     responses:
  *       200:

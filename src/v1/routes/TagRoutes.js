@@ -6,7 +6,7 @@ const tagController = require('../../controllers/TagController');
 /**
  * @swagger
  * tags:
- *   name: Tags
+ *   name: Catalogs
  *   description: Rutas relacionadas con los Tags.
  */
 
@@ -16,7 +16,7 @@ const tagController = require('../../controllers/TagController');
  *   get:
  *     summary: Obtiene todos los tags
  *     tags: 
- *       - Tags
+ *       - Catalogs
  *     description: Devuelve una lista de todos los tags disponibles.
  *     responses:
  *       200:

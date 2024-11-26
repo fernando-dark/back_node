@@ -6,7 +6,7 @@ const businessController = require('../../controllers/BusinessController');
 /**
  * @swagger
  * tags:
- *   name: Bunisess
+ *   name: Catalogs
  *   description: Rutas relacionadas con los Bunisess.
  */
 
@@ -16,7 +16,7 @@ const businessController = require('../../controllers/BusinessController');
  *   get:
  *     summary: Obtiene todos los Bunisess
  *     tags: 
- *       - Bunisess
+ *       - Catalogs
  *     description: Devuelve una lista de todos los Bunisess disponibles.
  *     responses:
  *       200:

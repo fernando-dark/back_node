@@ -1,5 +1,5 @@
 const express = require('express');
-const { addApp, deleteApp, getAppWithDetails } = require('../../controllers/AppController');
+const { addApp, deleteApp, updateApp, getAppWithDetails } = require('../../controllers/AppController');
 const { validateAppFieldsApp, upload } = require('../../middlewares/validateAppFields');
 
 const router = express.Router();
@@ -181,7 +181,7 @@ const router = express.Router();
  *               methodsAccess:
  *                 type: string
  *                 description: Métodos de acceso para la app.
- *                 example: '[{"id":1,"method":"Web"},{"id":1,"method":"App"}]'
+ *                 example: '[{"id":1,"method":"Web"}]'
  *               url:
  *                 type: string
  *                 format: uri
@@ -321,11 +321,18 @@ const router = express.Router();
  *                 error:
  *                   type: string
  *                   example: Error interno del servidor
+ * /app/update:
+ *  put:
+ *     summary: Se aplica un update a la app
+ *     tags: 
+ *       - App
+ *     description: Método para realizar un update al servicio de la app
  */
 router
     .post('/create', upload.single('image'), validateAppFieldsApp, addApp)
     .get('/consult', getAppWithDetails)
     .delete('/delete/:id', deleteApp)
+    .put('/update/:id', upload.single('image'), validateAppFieldsApp, updateApp)
 
 
 module.exports = router;    
